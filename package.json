@@ -1,0 +1,12 @@
+{
+  "name": "myoji-survival",
+  "private": true,
+  "scripts": {
+    "dev": "python3 -m http.server 8000 --bind 127.0.0.1 --directory public",
+    "fetch-data": "python3 scripts/fetch_surnames.py",
+    "deploy": "wrangler pages deploy public --project-name myoji-survival --branch main"
+  },
+  "devDependencies": {
+    "wrangler": "^4.144.0"
+  }
+}

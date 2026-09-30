@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>苗字サバイバル</title>
+<meta name="description" content="上位1000姓を1万分の1にした8,447人が歩き回り、ぶつかるたびに五分五分でどちらかの苗字にそろっていくシミュレーション">
+<meta property="og:title" content="苗字サバイバル">
+<meta property="og:description" content="上位1000姓を1万分の1にした8,447人が歩き回り、ぶつかるたびに五分五分でどちらかの苗字にそろっていくシミュレーション">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://myoji-survival.pages.dev/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='10' cy='12' r='6' fill='%232c4a8c'/%3E%3Ccircle cx='22' cy='20' r='6' fill='%23c0453a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>苗字サバイバル</h1>
+    <p class="lede">全国の名字ランキング上位1000姓を1万分の1に縮めた<b id="totalN"></b>人が歩き回り、ぶつかるたびに五分五分でどちらかの苗字にそろいます。</p>
+  </header>
+
+  <div class="layout">
+    <main>
+      <div class="field-wrap" id="fieldWrap">
+        <canvas id="field" aria-label="苗字ごとに色分けされた点が動き回るシミュレーション"></canvas>
+        <div id="tip" hidden></div>
+        <div id="gone" hidden></div>
+        <div id="banner" hidden></div>
+      </div>
+      <div class="controls">
+        <button id="play" class="primary" type="button">一時停止</button>
+        <button id="reset" type="button">最初から</button>
+        <label class="ctl" for="speed">速さ <input id="speed" type="range" min="0" max="9" step="1" value="2"><output id="speedOut">×1</output></label>
+        <span class="ctl">
+          <label for="track">追跡</label>
+          <input id="track" type="text" list="nameList" placeholder="苗字を入力（例：横田）" autocomplete="off">
+          <button id="clearTrack" type="button" hidden>解除</button>
+        </span>
+        <datalist id="nameList"></datalist>
+      </div>
+      <div class="charts">
+        <figure><figcaption>残っている苗字の数 <span>縦軸は対数</span></figcaption><canvas id="chAlive"></canvas></figure>
+        <figure><figcaption>現在の上位6姓のシェア推移 <span>下から首位・縦軸は自動調整</span></figcaption><canvas id="chShare"></canvas></figure>
+        <figure><figcaption>順位と人数 <span>点線は初期状態・両対数</span></figcaption><canvas id="chZipf"></canvas></figure>
+      </div>
+    </main>
+
+    <aside>
+      <section class="panel">
+        <dl class="stats">
+          <div><dt>ステップ</dt><dd id="stStep">0</dd></div>
+          <div><dt>苗字が変わった回数</dt><dd id="stConv">0</dd></div>
+          <div><dt>残っている苗字</dt><dd id="stAlive">1,000 <small>/ 1,000</small></dd></div>
+          <div><dt>首位</dt><dd id="stLead" class="name">佐藤</dd></div>
+        </dl>
+      </section>
+      <section class="panel">
+        <h2>勢力ランキング <span>人数・シェア</span></h2>
+        <ol id="race"></ol>
+      </section>
+      <section class="panel" id="trackPanel" hidden>
+        <h2>追跡中の苗字</h2>
+        <div id="trackCard"></div>
+      </section>
+      <section class="panel">
+        <h2>できごと <span id="extCount">消えた苗字 0</span></h2>
+        <ol id="ticker"><li class="empty">まだ何も起きていません</li></ol>
+      </section>
+    </aside>
+  </div>
+
+  <footer>
+    <p>データ：<a href="https://myoji-yurai.net/prefectureRanking.htm">名字由来net 全国名字ランキング</a>の上位1000位の「およその人数」（2026年9月30日取得）に0.0001をかけて四捨五入。1位 佐藤（約179.8万人）は180人、1000位 紺野（約1.77万人）は2人、合計<span id="totalN2"></span>人です。</p>
+    <p>ルール：各人は向きを少しずつ変えながら同じ速さで歩き、接触した2人の苗字が違えば50%ずつの確率でどちらかにそろいます。点にマウスを重ねると苗字が見られ、点やランキングの苗字をクリックするとその苗字を追跡できます。</p>
+    <p>これは数理モデルでいう「ボーター・モデル（中立浮動）」です。どの苗字にも有利不利がないため、最後に1つだけ残る確率はその苗字の初期人数に比例します。いちばん多い佐藤でも約2.1%（180 / 8,447）しかありません。上位が2〜3姓に絞られてからの決着は長引きやすく、全体で数万〜十数万ステップかかります。</p>
+  </footer>
+</div>
+
+<script src="surnames.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
